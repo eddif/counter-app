@@ -1,0 +1,6 @@
+{
+    "baseUrl": "http://localhost:3000",
+    "experimentalFetchPolyfill": true,
+    "responseTimeout": 499,
+    "backendBaseURL": "http://localhost:3002"
+}
