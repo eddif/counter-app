@@ -1,35 +1,73 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
 
+
+function DecrementButton(props) {
+          return (
+          <div 
+            className="btn" 
+            data-testid="decrement"  
+            onClick={props.onClickFunction}>
+               -
+            </div>
+               )
+}
+
+function IncrementButton(props) {
+          return (
+          <div
+            className="btn"
+            data-testid="increment"
+            onClick={props.onClickFunction}
+          >
+            +
+          </div>
+          )
+}
+
+function SubmitButton(props) {
+  return (
+        <button type="submit" 
+          data-testid="submit" 
+          disabled={props.count > 20 || props.count < -10 ? true : false} 
+          onClick={props.onSubmitFunction}
+        >
+          click me
+        </button>
+  )
+}
+
 function App() {
   const [count, setCount] = useState(0);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true); 
-  // const submit = () => {
-  //   fetch("http://localhost:3002/count", {
-  //     method: "POST",
-  //     body: JSON.stringify(`${count}`),
-  //   })
-  //   console.log('submitted: ' + count)
-  //   checkCount()
-  // };
-  const loadData = () => {
-    fetch("http://localhost:3002/count", {
+  const submit = async () => {
+    await fetch("http://localhost:3002/count", {
       method: "POST",
       body: JSON.stringify(count),
     })
+    console.log('submitted: ' + count)
+    checkCount()
+  };
+  const fetchData = () => {
+    // fetch("http://localhost:3002/count", {})
+    submit()
+    .then(response => response.json())
+    .then(count => setCount(count))
+    .catch(error => console.log(error))
+
     setTimeout(() => {
       setLoading(false);
-      setCount(count);
-    }, 600);
+      //setCount(count);
+    }, 1500);
     checkCount()
   }
 
   useEffect(() => {
-    //loadData()
+    fetchData()
     // setSuccess(false)
-    setLoading(false);
+    // setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -59,36 +97,23 @@ const decrementCount = () => {
      {loading ? <pre>Loading...</pre> :
       <div className="container">
         <div className="counter">
-          <div className="btn" 
-               data-testid="decrement"  
-               onClick={decrementCount}>
-               -
-               </div>
+          <DecrementButton onClickFunction={decrementCount} />
           <span data-testid="count-value">{count}</span>
-          <div
-            className="btn"
-            data-testid="increment"
-            onClick={incrementCount}
-          >
-            +
-          </div>
+          <IncrementButton onClickFunction={incrementCount}/>
         </div>
-        <button type="submit" 
-        data-testid="submit" 
-        disabled={count > 20 || count < -10 ? true : false} 
-        onClick={loadData}
-        
-        >
-          click me
-        </button>
+        <SubmitButton onSubmitFunction={submit}/>
         {error && (
           <span className="error" 
           data-testid="error">
             There was an error submitted your count!
           </span>
-        )}
-        {success && <span className="success" 
-        data-testid="success">Count submitted</span>}
+          )}
+        {success && (
+          <span className="success" 
+          data-testid="success">
+          Count submitted
+          </span>
+          )}
       
       </div>
      }
